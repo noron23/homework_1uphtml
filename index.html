@@ -12,14 +12,33 @@
         display: block;
       }
       .carousel-image {
-        max-height: 400px; /* 限制最大高度 */
-        object-fit: cover; /* 保持圖片比例並裁剪超出部分 */
-        width: 100%; /* 設置寬度為容器寬度 */
+        max-height: 400px;
+        object-fit: cover;
+        width: 100%;
+      }
+      .info-bar {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #6c757d;
+      }
+      .banner {
+        background-color: #007bff;
+        color: white;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 18px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
+    <!-- 網站橫幅 -->
+    <div class="banner">
+      歡迎來到均融大帥哥書店！這裡提供書籍資訊。
+    </div>
+
+    <div class="container mt-4">
       <!-- 圖片輪播 -->
       <div id="bookCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
         <div class="carousel-inner">
@@ -43,9 +62,14 @@
         </button>
       </div>
 
-      <h1>均融大帥哥書店</h1>
+      <h1></h1>
       <div class="row" id="div-books">
       </div>
+    </div>
+
+    <!-- 底部資訊欄 -->
+    <div class="info-bar mt-5">
+      均融大帥哥書店 © 2025 | 聯絡我們：example@example.com | 電話：123-456-7890
     </div>
 
     <script>
