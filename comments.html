@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>留言板</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- 網站橫幅 -->
+  <div class="banner bg-primary text-white text-center py-3">
+    <a href="index.html" class="text-white me-3">首頁</a>
+    <span>留言板</span>
+  </div>
+
+  <div class="container mt-4">
+    <h1 class="text-center">留言板</h1>
+    <!-- 顯示來源提示 -->
+    <div id="sourceMessage" class="alert alert-info d-none text-center"></div>
+
+    <!-- 留言表單 -->
+    <form id="commentForm" class="mb-4">
+      <div class="mb-3">
+        <label for="commentName" class="form-label">您的名字</label>
+        <input type="text" class="form-control" id="commentName" required>
+      </div>
+      <div class="mb-3">
+        <label for="commentContent" class="form-label">留言內容</label>
+        <textarea class="form-control" id="commentContent" rows="3" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">提交留言</button>
+    </form>
+
+    <h3>留言列表</h3>
+    <ul id="commentList" class="list-group mb-4">
+      <!-- 留言會動態插入 -->
+    </ul>
+
+    <!-- Google Maps 嵌入 -->
+    <h3 class="text-center mb-4">台中書店推薦 ： 勤美誠品位置</h3>
+    <div class="d-flex justify-content-center">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3640.5822464598327!2d120.66142757534844!3d24.15130487839903!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x34693d9dd9fe0011%3A0x6f9d8ebd38727566!2z5Yuk576O6Kqg5ZOB57ag5ZyS6YGT!5e0!3m2!1szh-TW!2stw!4v1737034511093!5m2!1szh-TW!2stw"
+        width="600"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+
+  <script>
+    let comments = [];
+
+    // 解析 URL 中的參數
+    function getQueryParams() {
+      const params = {};
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      urlParams.forEach((value, key) => {
+        params[key] = value;
+      });
+      return params;
+    }
+
+    // 處理 URL 參數
+    const params = getQueryParams();
+    const sourceMessage = document.getElementById('sourceMessage');
+    if (params.id) {
+      sourceMessage.textContent = `您是使用 ID=${params.id} 跳轉過來的！`;
+      sourceMessage.classList.remove('d-none');
+    }
+
+    // 提交留言
+    document.getElementById('commentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('commentName').value;
+      const content = document.getElementById('commentContent').value;
+
+      comments.push({ name, content });
+      updateCommentList();
+      document.getElementById('commentForm').reset();
+    });
+
+    // 更新留言列表
+    function updateCommentList() {
+      const commentList = document.getElementById('commentList');
+      commentList.innerHTML = comments.map(comment => `
+        <li class="list-group-item">
+          <strong>${comment.name}</strong>: ${comment.content}
+        </li>`).join('');
+    }
+  </script>
+</body>
+</html>
