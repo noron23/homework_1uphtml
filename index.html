@@ -6,119 +6,137 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
       .card-info {
-  display: none;
-}
-.card:hover .card-info {
-  display: block;
-}
-      </style>
+        display: none;
+      }
+      .card:hover .card-info {
+        display: block;
+      }
+      .carousel-image {
+        max-height: 400px; /* 限制最大高度 */
+        object-fit: cover; /* 保持圖片比例並裁剪超出部分 */
+        width: 100%; /* 設置寬度為容器寬度 */
+      }
+    </style>
   </head>
   <body>
     <div class="container">
+      <!-- 圖片輪播 -->
+      <div id="bookCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://s2.eslite.com/unsafe/fit-in/x900/s.eslite.com/upload/product/o/2682144182002/20220318054356524735.jpg" class="d-block w-100 carousel-image" alt="Book 1">
+          </div>
+          <div class="carousel-item">
+            <img src="https://s2.eslite.com/unsafe/fit-in/x900/s.eslite.com/upload/product/o/2682069773002/20211006063652155341.jpg" class="d-block w-100 carousel-image" alt="Book 2">
+          </div>
+          <div class="carousel-item">
+            <img src="https://s2.eslite.com/unsafe/fit-in/x900/s.eslite.com/b2b/newItem/2024/03/30/349_184432102_732_mainCoverImage1.jpg" class="d-block w-100 carousel-image" alt="Book 3">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
       <h1>均融大帥哥書店</h1>
-      <div class="row" id ="div-books">
+      <div class="row" id="div-books">
       </div>
     </div>
-  </body>
-  <script>
-    // Replace with your Google Sheets API key and spreadsheet ID
-const API_KEY = 'AIzaSyDe-HXm0ZG2CGw4-sucCUkz-5H9Om1ar9w';
-const SPREADSHEET_ID = '1o8DcaIsurqmKz6VW2ii_ItICf-MWt49Agbk9dReek4A';
-const RANGE = 'Data'; // Replace with the desired range
-let books = [];  // 初始化為空數組
 
-async function fetchSheetData() {
-    const endpoint = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-    try {
-        const response = await fetch(endpoint, {
+    <script>
+      const API_KEY = 'AIzaSyDe-HXm0ZG2CGw4-sucCUkz-5H9Om1ar9w';
+      const SPREADSHEET_ID = '1o8DcaIsurqmKz6VW2ii_ItICf-MWt49Agbk9dReek4A';
+      const RANGE = 'Data'; 
+      let books = [];  
+
+      async function fetchSheetData() {
+        const endpoint = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+        try {
+          const response = await fetch(endpoint, {
             method: 'GET', 
             mode: 'cors', 
             headers: { 'Accept': 'application/json' }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Sheet Data:', data.values);
-        
-        // 使用 push 而不是 append，並修正對象語法
-        for (let i = 1; i < data.values.length; i++) {
-            books.push({
-                name: data.values[i][0],
-                writer: data.values[i][1],
-                info: data.values[i][2],
-                img_url: data.values[i][3]
-            });
-        }
-        
-        // 獲取數據後更新顯示
-        updateBookList();
-        
-    } catch (error) {
-        console.error('Error fetching sheet data:', error);
-    }
-}
+          });
 
-// 更新顯示書籍列表的函數
-function updateBookList() {
-    const booklist = document.getElementById("div-books");
-    let html_code_books = "";
-    
-    // 使用從 Google Sheets 獲取的數據
-    for (let i = 0; i < books.length; i++) {
-        html_code_books += `
-        <div class="col-6 col-md-4 col-lg-3 p-2">
-            <div class="card h-100 position-relative">
-            <div style="card-img-top max-height:200px;" >
-              <img src="${books[i].img_url}" class="img-fluid" alt="">
-            </div>
-            <p class="card-info position-absolute top-0 end-0">
-                      <span class="badge text-bg-secondary">
-                        ${books[i].writer}
-                      </span>
-                    </p>
-                <div class="card-body">
-                    <h5 class="card-title">${books[i].name}</h5>
-                </div>
-                <div class="card-footer border-0">
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_book${i}">
-                    View More
-                  </button>
-                </div>
-            </div>
-        </div>
-       
-        <!-- Modal -->
-        <div class="modal fade" id="modal_book${i}" tabindex="-1" aria-labelledby="modal_book${i}_label" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modal_modal_book${i}_label">${books[i].name}</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log('Sheet Data:', data.values);
+
+          for (let i = 1; i < data.values.length; i++) {
+            books.push({
+              name: data.values[i][0],
+              writer: data.values[i][1],
+              info: data.values[i][2],
+              img_url: data.values[i][3]
+            });
+          }
+
+          updateBookList();
+        } catch (error) {
+          console.error('Error fetching sheet data:', error);
+        }
+      }
+
+      function updateBookList() {
+        const booklist = document.getElementById("div-books");
+        let html_code_books = "";
+
+        for (let i = 0; i < books.length; i++) {
+          html_code_books += `
+          <div class="col-6 col-md-4 col-lg-3 p-2">
+              <div class="card h-100 position-relative">
+              <div style="card-img-top max-height:200px;" >
+                <img src="${books[i].img_url}" class="img-fluid" alt="">
               </div>
-              <div class="modal-body">
-                ${books[i].info}
+              <p class="card-info position-absolute top-0 end-0">
+                        <span class="badge text-bg-secondary">
+                          ${books[i].writer}
+                        </span>
+                      </p>
+                  <div class="card-body">
+                      <h5 class="card-title">${books[i].name}</h5>
+                  </div>
+                  <div class="card-footer border-0">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal_book${i}">
+                      View More
+                    </button>
+                  </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+
+          <div class="modal fade" id="modal_book${i}" tabindex="-1" aria-labelledby="modal_book${i}_label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="modal_modal_book${i}_label">${books[i].name}</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ${books[i].info}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        `;
-    }
-    
-    booklist.innerHTML = html_code_books;
-}
+          `;
+        }
 
-// 當頁面加載完成時獲取數據
-document.addEventListener('DOMContentLoaded', fetchSheetData);
+        booklist.innerHTML = html_code_books;
+      }
+
+      document.addEventListener('DOMContentLoaded', fetchSheetData);
     </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 </html>
